@@ -1,0 +1,394 @@
+#!/usr/bin/perl 
+#
+##
+##########################################################################
+#                                                                        #
+#       Automaton Framework                                              #
+#                                                                        # 
+#       Forensic Auditing Toolkit                                        #
+#                                                                        #
+#       Forensic Auditing System - Designed to build an audit trail      #
+#       and health check on all systems                                  #
+#                                                                        #
+#       Copyright (C) 2010 by Vamegh Hedayati                            #
+#       vamegh@gmail.com                                                 #
+#                                                                        #
+#       Please see Copying for License Information                       #
+#                               GNU/GPL v2 2010                          #
+##########################################################################
+##
+#
+#################################################
+# External Modules 
+##
+# These will need to be installed on the system
+# running this script 
+#
+# Refer to the installation directory which will 
+# provide auto installation scripts for all 
+# required perl modules
+##
+# Integrity Checks
+##
+use strict;
+use warnings;
+#################################################
+# My Modules
+##
+# All provided in the ./libs directory
+##
+use lib qw(./libs);
+##
+# These should be available by default 
+##
+use libs::GenDate;
+use libs::Colour;
+use libs::LogHandle;
+use libs::DBCON;
+use libs::CMDHandle;
+use libs::FileHandler;
+use libs::UserHandle;
+use libs::RCON;
+use libs::ChkMods;
+use libs::HashCreator;
+use libs::MailHandler;
+#use libs::SVNCon;
+#################################################
+##
+# Need the current date and time
+# Generating This before anything else
+##
+&make_date;
+#################################################
+# Local Internal Variables for this script
+##
+my $myname=" :: Automaton - Main Program Interface";
+my $caller="$myname";
+#################################################
+#  Sub-Routines / Functions Definitions
+###
+# This is the actual Body of the script 
+##
+# Calling the various different sub routines / functions
+##
+# reading in all of the different command line options
+##
+&cmd_handle;
+##
+#getting everything to be written to the log file.
+##
+&log_loc;
+
+
+if (!defined($cfg_file)) { $cfg_file="/etc/Automaton/automaton.cfg"; }
+if (!defined($log_file)) { $log_file="/var/log/Automaton/$date-automaton.log"; }
+
+
+
+&log_it("$myname","debug","2","$caller");
+&ssh_rcon("rsa","10.19.95.22","22");
+
+
+##my $hostname="Test12345";
+
+#my $c_file="/home/host/Projects/vFats/cfg/vfats.cfg"; 
+&read_cfg("cfgpars","$cfg_file");
+&read_cfg("rulespars","$cfg_file");
+
+my $auditimg="/opt/Automaton/remote/audit.img";
+my $auditgz="/opt/Automaton/remote/$host_name/audit.tar.gz";
+
+#&createHash("$auditimg","file");
+&createHash("$auditgz","file");
+&createHash("This is Test Data For HashCreator","var");
+
+&send_mail;
+
+
+#&svn_createRepo("$hostname");
+#&svn_addFiles;
+#&svn_addFiles("$auditimg","$hostname");
+#&svn_printLogs("working","$hostname"); 
+##&svn_dumpRepo 
+
+
+#&chkmod_exists("Alien::SVN");
+#&chkmod_exists("SVN::Client");
+#my $ssh_mod="$mod_name";
+#&log_it("In $myname :: Appears $mod_use is available using this","debug","3","$caller");
+#eval {
+#  require "$mod_use.pm";
+#  "$mod_use.pm"->import();
+#};
+#&log_it("In $myname :: Using $mod_name loaded $mod_use, eval returned $@","debug","3","$caller");
+#
+#&chkmod_exists("NET::SSH","NET::SSH2","Net::SSH::Perl","NET::SSH1","Net::SSHx");
+#&chkmod_exists("Net::SSH","NET::SSH1");
+#print "Module sent back and is $mod_use\n";
+
+#eval {
+#  require "$mod_use.pm";
+#  "$mod_use.pm"->import();
+#};
+#&log_it("In $myname :: eval returned $@","debug","3","$caller");
+#my $rcon_host="10.19.95.22";
+#my $debug_level="1";
+#
+#my $ssh = Net::SSH::Perl->new("$rcon_host", debug => $debug_level);
+#my $auth = Net::SSH::Perl::Auth->new('RSA', $ssh);
+#$ssh->login or die "$!";
+#&log_it("RCON Method :: RSA Method Selected","debug","3","$caller");
+#my ($out, $err, $exit) = $ssh->cmd("uname -n");
+#chomp $out;
+#if (!defined($err)) { $err="err" }
+#print "out=$out\nerr=$err\nexit=$exit\n";
+#
+#
+# *** STUFF TO DO ****
+# To Do:
+# * Work out how to store data and setup templates providing max flexibility & minimum complexity == headache
+# * Work on Communication Method -- Nearly working woohoo !!
+# * Define the DataBase layout and create template 
+# *
+# * Update all current scripts to new template layout -done
+# * Maybe should script the templating  - ignored not necessary !
+# * Update all current modules to new template layout - done !
+# 
+
+
+END { }       # Global Destructor
+
+1;
+
+#################################################
+#
+################################### EO PROGRAM #######################################################
+#
+################################ MODULE HELP / DOCUMENTATION SECTION #################################
+##
+# Original implementation idea from linblock.pl http://www.dessent.net/linblock/ (c) Brian Dessent GNU/GPL
+# This actually uses no code from linblock.pl, but the implementation was learnt by studying the above script
+# To access documentation please use perldoc automaton, This will provide 
+# the formatted help file for this specific module 
+##
+#
+# perldoc automaton 
+#
+# This will provide the formatted help file for this specific script. 
+##
+#################################################
+#
+__END__
+
+=head1 NAME
+
+automaton - Automaton FrameWork: Forensic Auditing Toolkit 
+
+=head1 SYNOPSIS
+
+./automaton [-C I<add colour>] [-c I<Database command line input>] [-L I<logging>] [-h I<host>] [-i I<database host_id>] [-f I<specify alternate config file>] [-d I<database>] [-u I<database username>] [-p I<database password>] [-P I<database port> ] [-s I<Maximum File Size>] [-I I<Create DD Image>] [-S I<Maximum DD Image size>] [-T I<Store DD Image File>] [-Z I<Compress DD Image>] [-v I<verbosity level>] [--help] [--version]
+
+
+=head1 DESCRIPTION
+
+ This is the main automaton program this should be used to invoke automaton 
+
+
+=head1 OPTIONS
+
+All command line options are optional.
+
+=over
+
+=item -C I<add colour>
+
+Uses Term::Ansicolor to colourise the logging. If not specified, no colour is output. 
+
+=item -D I<dont log to file>
+
+Doesnt log to file, instead outputs everything to the command line.
+With this specified -L will be ignored 
+
+=item -s I<Maximum File Size>
+
+This determines the maximum size of the directory that can be stored. 
+
+It is advisable to set this via the configuration file, but this command line option is provided just in case.  
+
+The permitted range is as follows:
+
+I<1> Minnimum Value -C<(-s 1)>
+
+I<2> Maximum Value  -C<(-s 10000)>
+
+This is in MegaBytes, so any value between 1MB to 10,000MB is acceptable, The default value is 100MB. 
+
+The larger this is set,
+
+* the more storage space that will be required 
+
+* the more processing time that will be needed.
+
+Please use this with caution.
+
+=item -I I<Create DD Images>
+
+Specifies that DD Images should be created. 
+
+Warning this adds a huge processing burden on the machine being imaged, use this with caution
+This is not recommended.
+
+The only permitted values are:
+
+I<1> Create DD Image -C<(-I yes)>
+
+I<2> Do not create DD image -C<(-I no)>
+
+These are the only 2 options that this command line will accept. 
+
+Please use with extreme caution as the burden on your infrastucture will be greatly increased.
+
+Once this is specified , the following options can also be set:
+
+Store Image Files -C<(-T)>
+
+Maximum Image Size -C<(-S)>
+
+Compress Images -C<(-Z)>
+
+=item -T I<Store Image Files>
+
+This can only be set if -I is specified above, otherwise the configuration file value is read in. 
+
+This is not recommended as it takes up far too much storage space and should only be used if this feature is really needed.
+
+The only permitted values are:
+
+I<1> Store image files -C<(-T yes)>
+
+I<2> Do not store image files -C<(-T no)>
+
+These are the only 2 options that this command line will accept 
+
+=item -S I<Maximum Image Size>
+
+This can only be set if -I is specified above, otherwise the configuration file value is read in. 
+The permitted range is as follows:
+
+I<1> Minnimum Value C<(-S 1)>
+
+I<2> Maximum Value  C<(-S 10000)>
+
+This is in MegaBytes, so any value between 1MB to 10,000MB is acceptable, The default value is 100MB. 
+The larger this is set,
+* the more storage space that will be required 
+* the more processing time that will be needed.
+Please use this with caution.
+
+=item -Z I<Compress the DD Image>
+
+This can only be set if -I is specified above, otherwise the configuration file value is read in. 
+Please be warned this is highly recommended, but will use more processing time on the Automaton Controller
+
+The only permitted values are:
+
+I<1> Compress the image files C<(-Z yes)>
+I<2> Do not compress the image files C<(-Z no)>
+
+These are the only 2 options that this command line will accept. 
+
+=item -c I<command line input>
+
+Specifies that all database values will be specified from command line.  If you specify this you need to specify the following:
+
+hostname C<(-h)> 
+
+port C<(-P)> 
+
+database C<(-d)>
+
+username C<(-u)> 
+
+password C<(-p)> 
+
+database host_id C<(-i)> 
+
+Along with the mentioned flags,  this will not work without all of the above information
+
+=item -L I<LOGGINGn>
+
+Specifiy where to log to. If not specified logs to default location /var/log/Automaton/automaton.log.<date>
+
+=item -h I<database host>
+
+Specify which database host to connect to, used when the -c option is specified 
+
+=item -d I<database>
+
+Specify which database to use, used when the C<(-c)> option is specified.
+
+=item -i I<databse host_id>
+
+Specify which host_id to use, used when the C<(-c)> option is specified
+
+=item -u I<database username>
+
+Specify Username to connect to the database used when the C<(-c)> option is specified
+
+=item -p I<database password>
+
+Specifiy password to connect to the database with.  used when the C<(-c)> option is specified
+
+=item -P I<database port>
+
+Specifiy port to connect to the database.  used when the C<(-c)> option is specified
+
+=item -f
+
+Specify a different config file to use default - /etc/Automaton/automaton.cfg
+
+=item -v 
+
+Verbosity Level
+
+I<1> verbosity low C<(-v 1)>
+
+I<2> Verbosity medium C<(-v 2)>
+
+I<3> Verbosity High C<(-v 3)>
+
+=item --help
+
+Print command line options summary.  For more detailed help, type C<perldoc -F Automaton>.
+
+=item --version
+
+Prints the version information.
+
+=back
+
+=head1 AUTHOR
+
+=over
+
+=item Vamegh Hedayati <vamegh AT gmail DOT com>
+
+=back
+
+=head1 LICENSE
+
+Copyright (C) 2010  Vamegh Hedayati <vamegh AT gmail DOT com>
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+Please refer to the COPYING file which is distributed with Automaton 
+for the full terms and conditions
+
+=cut
+#
+#################################################
+#
+######################################### EOF  #######################################################

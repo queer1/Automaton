@@ -1,0 +1,30 @@
+Stuff to add and Do
+
+Image creation, 2 possible methods:
+
+
+1.  Method 1 
+
+Force tarballs only migrate tarballs across no images created. 
+
+Tar ball checksummed extracted files added into svn tarball deleted.
+
+
+
+2.  Method 2
+
+dd image created, checksummed. 
+
+Image mounted locally on server files added into SVN repo. 
+
+Can keep image files  with a variable. 
+
+
+
+Other things to add:
+
+Constant SSH-Key Modification constantly changing negotiation keys and auto generation of new keys.
+
+Keep old key, go through list of servers when last is hit wait 30 Minutes regenerate keys.
+
+

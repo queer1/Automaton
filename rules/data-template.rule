@@ -1,0 +1,90 @@
+#
+##
+##########################################################################
+#                                                                        #
+#       vFATS Forensic Auditing Toolkit System  <vFATS>                  #
+#                                                                        #
+#       Forensic Auditing System - Designed to build an audit trail      #
+#       and health check on all systems                                  #
+#                                                                        #
+#       Copyright (C) 2010 by Vamegh Hedayati                            #
+#       vamegh@gmail.com                                                 #
+#                                                                        #
+#       Please see Copying for License Information                       #
+#                               GNU/GPL v2 2010                          #
+##########################################################################
+##
+# vFATS Rule template
+##
+# This is a sample rules template for a Debian Linux Data Gathering task.
+##
+# There are 3 types of rules
+#  1. Administration (admin)
+#  2. Examination (exam)
+#  3. Data Gathering (data)
+## 
+#################################################
+
+
+!VFATS.RULES
+
+## Before defining what you intend to do on the system the system os needs to be 
+## defined and if part of a specific group this also needs to be defined.
+Os=Linux.Debian;
+Group=mailservers;
+
+## Defining the type of rule
+Rules=data;
+
+##How often to run this particular rule, the format is the same as cron, slightly different layout, which is as follows:
+## Need to think this bit through, possibly shouldnt be per rule, or should it ? Too much work.
+## Minute to run 0 - 59 
+Run.Minute=*; 
+## Hour to run 0 - 23 
+Run.Hour=*;
+##day of month 1 -31 days
+Run.dom=*;
+## 1 - 12 where 1=jan,2=feb,3=mar etc..
+Run.month=*;
+##(Sunday = 0 or 7 Monday=1 Tuesday=2 etc..)
+Run.dow=7; 
+
+
+## The actual rules template, the values can even be comprised of system commands
+## to execute a system command, it has to be encapsulated in square brackets.
+
+Path=/var/tmp,/usr/lib,/usr/bin,/usr/sbin,/root,/etc;
+Path.Checksum=md5,sha1,sha2;
+
+## Whether or not to actually store the actual directory listings, if not stored the checksums 
+## are always stored and the checksums will provide instant evidence of modification, but they will not show the modifications
+## It is recommended to store this data. The database gets the SVN logs of difference stored for user viewing.
+
+Path.Store=yes;
+
+## Ideally we want all of the default binary paths to be imaged, but this can be any comma seperated list of paths you wish
+## to be imaged. 
+
+Image=[echo $PATH|sed s/:/,/g],/home,/etc;
+Image.Checksum=md5,sha1,sha2;
+
+## Should the files be imaged with dd or should they be just incapsulated and compressed into a tar.gz file ? 
+## It is not recommended to do both as it will take up too much space, with the DD method system partitions 
+## can also be directly imaged.
+Image.DD=yes;
+IMage.TGZ=no;
+
+## Whether or not to store the actual image.
+## If the image itself is not stored the different hashes are stored
+## It is highly recommended to store the image files, so that they can be used for possible future forensic examination.
+Image.Store=yes;
+
+## To improve performance it is recommended to compress images, if the tgz method is used above it will always be compressed.
+Image.Compress=yes;
+
+## A limitation can be set on image size, if the image exceeds this size it will not be saved, by default this is set to 500M  
+## This limitation is not for the total size but for each Image path defined, so for example /usr/bin will have a 500M limit, if 
+## the image exceeds this size it is not stored. 
+## G = Gigabytes , M=Megabytes, B indicates the value given is in Bytes(default)
+Store=500M;
+

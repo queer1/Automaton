@@ -1,0 +1,28 @@
+#
+##
+##########################################################################
+#                                                                        #
+#       vFATS Forensic Auditing Toolkit System  <vFATS>                  #
+#                                                                        #
+#       Forensic Auditing System - Designed to build an audit trail      #
+#       and health check on all systems                                  #
+#                                                                        #
+#       Copyright (C) 2010 by Vamegh Hedayati                            #
+#       vamegh@gmail.com                                                 #
+#                                                                        #
+#       Please see Copying for License Information                       #
+#                               GNU/GPL v2 2010                          #
+##########################################################################
+##
+# vFATS Rule template
+##
+# This is a sample rules template for a Debian Linux Data Gathering task.
+##
+# There are 3 types of rules
+#  1. Administration (admin)
+#  2. Examination (exam)
+#  3. Data Gathering (data)
+## 
+#################################################
+
+
